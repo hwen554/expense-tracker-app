@@ -114,7 +114,6 @@ export interface CustomButtonProps extends TouchableOpacityProps {
     style?: ViewStyle;
     onPress?: () => void;
     loading?: boolean;
-    hasShadow?: boolean;
     children: React.ReactNode;
 }
 
