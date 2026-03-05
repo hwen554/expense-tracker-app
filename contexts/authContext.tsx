@@ -16,6 +16,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
     useEffect(() => {
         const unsub = onAuthStateChanged(auth, (firebaseUser) => {
+            console.log("firebase user: ", firebaseUser);
             if(firebaseUser){
                 setUser({
                     uid: firebaseUser?.uid,
