@@ -19,7 +19,7 @@ const Home = () => {
 
   return (
     <ScreenWrapper>
-      <Text>Home</Text>
+      <Typo>Home</Typo>
       <Button onPress={handleLogout} style={{marginTop: 20}}>
         <Typo color={colors.black}>Logout</Typo>
       </Button>
