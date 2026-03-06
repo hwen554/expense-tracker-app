@@ -23,6 +23,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
                     email: firebaseUser?.email ?? undefined,
                     name: firebaseUser?.displayName
                 });
+                updateUserData(firebaseUser.uid);
                 router.replace("/(tabs)");
             }else{
                // no user

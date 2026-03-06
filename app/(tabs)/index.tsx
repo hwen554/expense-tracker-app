@@ -5,13 +5,18 @@ import { colors } from '../../constants/theme';
 import Typo from '@/components/Typo';
 import { auth } from '@/config/firebase';
 import { signOut } from 'firebase/auth';
+import { useAuth } from '@/contexts/authContext';
+import ScreenWrapper from '@/components/ScreenWrapper';
 
 
 const Home = () => {
+
+  const { user } = useAuth();
+  console.log("user: ", user);
   const handleLogout = async () => {
     await signOut(auth);
   }
-  
+
   return (
     <View>
       <Text>Home</Text>
