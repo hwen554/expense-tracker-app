@@ -5,12 +5,16 @@ import Typo from '@/components/Typo';
 import { spacingX, spacingY } from '@/constants/theme';
 import { verticalScale } from '@/utils/styling';
 import { colors, radius } from '@/constants/theme';
+import Header from '@/components/Header';
 
 
 const Profile = () => {
     return (
         <ScreenWrapper>
-            <Typo>Profile</Typo>
+            <View style={styles.container}>
+                {/* header */}
+                <Header />
+            </View>
         </ScreenWrapper>
     )
 }
