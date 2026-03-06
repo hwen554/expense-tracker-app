@@ -1,7 +1,9 @@
 import { colors } from "@/constants/theme";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { Text } from "@react-navigation/elements";
-import { TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View, StyleSheet, Platform } from "react-native";
+import { verticalScale } from "@/utils/styling";
+
 
 export default function CustomTabs({
   state,
@@ -53,7 +55,7 @@ export default function CustomTabs({
             onLongPress={onLongPress}
             style={{ flex: 1 }}
           >
-            <Text style={{ color: isFocused ? colors.primary : colors.text }}>
+            <Text style={{ color: isFocused ? colors.primary : colors.neutral800 }}>
               {label}
             </Text>
           </TouchableOpacity>
@@ -62,3 +64,15 @@ export default function CustomTabs({
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+    tabbar: {
+        flexDirection: "row",
+        width: "100%",
+        height: Platform.OS === "ios" ? verticalScale(73) : verticalScale(60),
+        backgroundColor: colors.neutral800,
+        justifyContent: "center",
+        alignItems: "center"
+    },
+
+})
