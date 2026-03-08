@@ -1,17 +1,72 @@
 import Header from "@/components/Header";
 import ScreenWrapper from "@/components/ScreenWrapper";
 import Typo from "@/components/Typo";
+import { auth } from "@/config/firebase";
 import { colors, radius, spacingX, spacingY } from "@/constants/theme";
 import { useAuth } from "@/contexts/authContext";
+import { getProfileImage } from "@/services/imageService";
+import { accountOptionType } from "@/types";
 import { verticalScale } from "@/utils/styling";
-import React from "react";
-import { StyleSheet, View } from "react-native";
 import { Image } from "expo-image";
-
+import { signOut } from "firebase/auth";
+import * as Icons from "phosphor-react-native";
+import React from "react";
+import { Alert, StyleSheet, TouchableOpacity, View } from "react-native";
 
 const Profile = () => {
   const { user } = useAuth();
 
+  const accountOptions: accountOptionType[] = [
+    {
+      title: "Edit Profile",
+      icon: <Icons.GearSix size={26} color={colors.white} weight="fill" />,
+      routeName: "/(modals)/profileModal",
+      bgColor: "#6366f1",
+    },
+    {
+      title: "Settings",
+      icon: <Icons.User size={26} color={colors.white} weight="fill" />,
+      //   routeName: "/(modals)/profileModal",
+      bgColor: "#6366f1",
+    },
+    {
+      title: "Privacy Policy",
+      icon: <Icons.Lock size={26} color={colors.white} weight="fill" />,
+      //   routeName: "/(modals)/profileModal",
+      bgColor: "#6366f1",
+    },
+    {
+      title: "Log Out",
+      icon: <Icons.SignOut size={26} color={colors.white} weight="fill" />,
+      //   routeName: "/(modals)/profileModal",
+      bgColor: "#6366f1",
+    },
+  ];
+
+  const handleLogout = async () => {
+    await signOut(auth);
+  };
+
+  const showLogoutAlert = () => {
+    Alert.alert("Confirm", "Are you sure you want to log out?", [
+      {
+        text: "Cancel",
+        onPress: () => console.log("Cancel Logout"),
+        style: "cancel",
+      },
+      {
+        text: "Logout",
+        onPress: () => handleLogout(),
+        style: "destructive",
+      },
+    ]);
+  };
+
+  const handlePress = async (item: accountOptionType) => {
+    if (item.title == "Log Out") {
+      showLogoutAlert();
+    }
+  };
   return (
     <ScreenWrapper>
       <View style={styles.container}>
@@ -22,17 +77,54 @@ const Profile = () => {
         <View style={styles.userInfo}>
           {/* avatar */}
           <View>
-            <Image source={user?.image} style={styles.avatar} contentFit="cover" transition={100}/>
+            <Image
+              source={getProfileImage(user?.image)}
+              style={styles.avatar}
+              contentFit="cover"
+              transition={100}
+            />
           </View>
           {/* name&email */}
           <View style={styles.nameContainer}>
             <Typo size={24} fontWeight={"600"} color={colors.neutral100}>
-                {user?.name}
+              {user?.name}
             </Typo>
             <Typo size={15} fontWeight={"600"} color={colors.neutral400}>
-                {user?.email}
+              {user?.email}
             </Typo>
           </View>
+        </View>
+
+        {/* account options */}
+        <View style={styles.accountOptions}>
+          {accountOptions.map((item, index) => {
+            return (
+              <View style={styles.listItem} key={index.toString()}>
+                <TouchableOpacity
+                  style={styles.flexRow}
+                  onPress={() => handlePress(item)}
+                >
+                  {/* icon */}
+                  <View
+                    style={[
+                      styles.listIcon,
+                      { backgroundColor: item?.bgColor },
+                    ]}
+                  >
+                    {item.icon && item.icon}
+                  </View>
+                  <Typo size={16} fontWeight={"500"} style={{ flex: 1 }}>
+                    {item.title}
+                  </Typo>
+                  <Icons.CaretRight
+                    size={verticalScale(20)}
+                    weight="bold"
+                    color={colors.white}
+                  ></Icons.CaretRight>
+                </TouchableOpacity>
+              </View>
+            );
+          })}
         </View>
       </View>
     </ScreenWrapper>
@@ -88,7 +180,7 @@ const styles = StyleSheet.create({
     marginBottom: verticalScale(17),
   },
   accountOptions: {
-    marginTop: spacingY._20,
+    marginTop: spacingY._35,
   },
   flexRow: {
     flexDirection: "row",
