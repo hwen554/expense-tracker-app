@@ -1,0 +1,114 @@
+import { Alert, StyleSheet, Text, View, ScrollView } from 'react-native'
+import { UserDataType } from '@/types';
+import React, { useState } from 'react'
+import ModalWrapper from '@/components/ModalWrapper'
+import Typo from '@/components/Typo'
+import { useAuth } from '@/contexts/authContext';
+import { useRouter } from 'expo-router';
+import * as ImagePicker from "expo-image-picker";
+
+import Header from '@/components/Header';
+import BackButton from '@/components/BackButton';
+import { colors, spacingY } from '@/constants/theme';
+import Input from '@/components/Input';
+import Button from '@/components/Button';
+import { updateUser } from '@/services/userService';
+import { scale } from '@/utils/styling';
+
+
+
+const WalletModal = () => {
+  const {user, updateUserData } = useAuth();
+  const [wallet, setWallet] = useState<UserDataType>({
+      name: "",
+      image: null,
+  });
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  
+  const onPickImage = async() => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images", "videos"],
+      // allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.5
+    });
+
+    if(!result.canceled){
+       
+    }
+  }
+
+  
+  const onSubmit = async() => {
+    let { name, image } = wallet;
+    if(!name.trim()) {
+      Alert.alert("User", "Please fill all the fields");
+      return;
+    }
+
+    setLoading(true);
+    const res = await updateUser(user?.uid as string, wallet);
+    setLoading(false);
+
+  }
+
+  return (
+    <ModalWrapper>
+        <View style={styles.container}>
+          <Header
+            title="New Wallet"
+            leftIcon={<BackButton />}
+            style={{marginBottom: 20}}
+          />
+
+          {/* form */}
+          <ScrollView contentContainerStyle={styles.form}>
+              <View style={styles.inputContainer}>
+                  <Typo color={colors.neutral200}>
+                    Wallet Name
+                  </Typo>
+                  <Input
+                       placeholder="Name"
+                       value={wallet.name}
+                       onChangeText={(value) => 
+                          setWallet({ ...wallet, name: value })
+                       }
+                  />
+              </View>
+          </ScrollView>
+        </View>
+
+        <View style={styles.footer}>
+            <Button onPress={onSubmit} loading={loading} style={{ flex: 1}}>
+               <Typo color={colors.black} fontWeight={"700"}>
+                  Add Wallet
+               </Typo>
+            </Button>            
+        </View>
+    </ModalWrapper>
+  )
+}
+
+export default WalletModal;
+
+const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: "space-between",
+      paddingHorizontal: spacingY._20
+    },
+    inputContainer: {
+     
+    },
+    form: {
+
+    },
+    footer: {
+      alignItems: 'center',
+      flexDirection: "row",
+      justifyContent: "center",
+      paddingHorizontal: spacingY._20,
+      gap: scale(12),
+    }
+})

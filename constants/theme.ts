@@ -61,5 +61,5 @@ export const radius = {
     _15: verticalScale(15),
     _17: verticalScale(17),
     _20: verticalScale(20),
-    _25: verticalScale(30)
+    _30: verticalScale(30)
 }
