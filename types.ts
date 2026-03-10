@@ -155,7 +155,7 @@ export type AuthContextType = {
 
 export type ResponseType = {
     success: boolean;
-    date?: any;
+    data?: any;
     msg?: string;
 };
 

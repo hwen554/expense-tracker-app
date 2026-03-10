@@ -3,20 +3,19 @@ import { ResponseType, UserDataType } from "@/types";
 import { doc, updateDoc } from "firebase/firestore";
 
 
-export const getUserData = async(
+export const updateUser = async(
     uid: string,
-    updatedData: UserDataType
+    updateData: UserDataType
 ): Promise<ResponseType> => {
-    try {
-
+    try{
         // image upload pending
         const userRef = doc(firebaseDb, "users", uid);
-        await updateDoc(userRef, updatedData);
+        await updateDoc(userRef, updateData);
 
-        // fetch the user & update the user state
-        return { success: true, msg: "updated successfully"};
-    } catch(error: any){
-        console.log("error updating user: ", error);
-        return { success: false, msg: error?.message };
+        return { success: true, msg: "User updated successfully" };
+
+    }catch(err: any){
+        console.log("Error updating user: ", err);
+        return { success: false, msg: err?.message };
     }
 }

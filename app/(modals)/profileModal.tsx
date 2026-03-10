@@ -14,17 +14,23 @@ import Input from '@/components/Input';
 import { UserDataType } from '@/types';
 import Button from '@/components/Button';
 import { useAuth } from '@/contexts/authContext';
+import { updateCurrentUser } from 'firebase/auth';
+import { updateUser } from '@/services/userService';
+import { useRouter } from 'expo-router';
+import * as ImagePicker from "expo-image-picker";
 
 
 
 const ProfileModal = () => {
- 
-  const {user} = useAuth();
+  const {user, updateUserData } = useAuth();
+
 
   const [userData, setUserData] = useState<UserDataType>({
     name: "",
     image: null,
   });
+
+  const router = useRouter();
 
   const [loading, setLoading] = useState(false);
 
@@ -35,6 +41,19 @@ const ProfileModal = () => {
     });
   }, [user]);
 
+  const onPickImage = async() => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images", "videos"],
+      // allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.5,
+    });
+
+    if(!result.canceled) {
+      setUserData({...userData, image: result.assets[0].uri});
+    }
+  }
+
   const onSubmit = async() => {
         // Handle form submission
         let {name, image} = userData;
@@ -42,7 +61,16 @@ const ProfileModal = () => {
             Alert.alert("User", "Please fill all the fields");
             return;
         } 
-        console.log("Good to go");  
+        setLoading(true);
+        const res = await updateUser(user?.uid as string, userData);
+        setLoading(false);
+        if(res.success){
+           // update user 
+           updateUserData(user?.uid as string);
+           router.back();
+        }else{
+           Alert.alert("User", res.msg);
+        }
   };
 
   return (
@@ -60,7 +88,7 @@ const ProfileModal = () => {
                     transition={100}
                 />
 
-                <TouchableOpacity style={styles.editIcon}>
+                <TouchableOpacity onPress={onPickImage} style={styles.editIcon}>
                     <Icons.Pencil
                       size={verticalScale(20)}
                       color={colors.neutral800}
