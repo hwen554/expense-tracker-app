@@ -50,7 +50,7 @@ const ProfileModal = () => {
     });
 
     if(!result.canceled) {
-      setUserData({...userData, image: result.assets[0].uri});
+      setUserData({...userData, image: result.assets[0]});
     }
   }
 
