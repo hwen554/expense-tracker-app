@@ -2,7 +2,7 @@ import { CLOUDINARY_CLOUD_NAME, CLOUDINARY_UPLOAD_PRESET } from "@/constants";
 import { ResponseType } from "@/types";
 import axios from "axios";
 
-const CLOUDINARY_CLOUD_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
+const CLOUDINARY_API_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
 
 export const uploadFileToCloudinary = async (
   file: {uri?: string} | string,
@@ -23,8 +23,16 @@ export const uploadFileToCloudinary = async (
       formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
       formData.append("folder", folderName);
 
-      const response = await axios.post(CLOUDINARY_CLOUD_URL);
-      
+      const response = await axios.post(CLOUDINARY_API_URL, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      });
+
+      console.log("Upload image result: ", response?.data);
+
+      return { success: true, data: response?.data?.secure_url };
+
     }
     return {success: true};
   }catch(error: any){
@@ -34,7 +42,7 @@ export const uploadFileToCloudinary = async (
 }
 
 export const getProfileImage = (file: any) => {
-  if (file && typeof file === "string") return true;
+  if (file && typeof file === "string") return file;
   if (file && typeof file === "object") return file.uri;
 
   return require("../assets/images/defaultAvatar.png");
