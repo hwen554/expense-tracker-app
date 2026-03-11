@@ -1,5 +1,5 @@
 import { Alert, StyleSheet, Text, View, ScrollView } from 'react-native'
-import { UserDataType } from '@/types';
+import { UserDataType, WalletType } from '@/types';
 import React, { useState } from 'react'
 import ModalWrapper from '@/components/ModalWrapper'
 import Typo from '@/components/Typo'
@@ -43,16 +43,28 @@ const WalletModal = () => {
   
   const onSubmit = async() => {
     let { name, image } = wallet;
-    if(!name.trim()) {
+    if(!name.trim() || !image) {
       Alert.alert("User", "Please fill all the fields");
       return;
     }
 
+    const data: WalletType = {
+      name,
+      image,
+      uid: user?.uid
+    };
+
     setLoading(true);
     const res = await updateUser(user?.uid as string, wallet);
     setLoading(false);
-
-  }
+    if(res.success){
+      // update user
+      updateUserData(user?.uid as string);
+      router.back();
+    }else{
+      Alert.alert("User", res.msg);
+    }
+  };
 
   return (
     <ModalWrapper>
@@ -82,7 +94,7 @@ const WalletModal = () => {
                   <ImageUpload
                        file={wallet.image} 
                        onClear={() => setWallet({...wallet, image: null})}
-                       onSelect={file=> setWallet({...wallet, image: file})} 
+                       onSelect={(file)=> setWallet({...wallet, image: file})} 
                        placeholder='Upload Image'
                   />
               </View>

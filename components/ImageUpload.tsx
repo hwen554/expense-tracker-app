@@ -32,7 +32,7 @@ const ImageUpload = ({
   return (
     <View>
        {!file && (
-        <TouchableOpacity style={[styles.inputContainer, containerStyle && containerStyle]}>
+        <TouchableOpacity onPress={pickImage} style={[styles.inputContainer, containerStyle && containerStyle]}>
             <Icons.UploadSimple color={colors.neutral200}/>
             {placeholder && <Typo size={15}>{placeholder}</Typo>}
         </TouchableOpacity>
@@ -47,7 +47,7 @@ const ImageUpload = ({
                      contentFit="cover"
                      transition={100}
                 />
-                <TouchableOpacity style={styles.deleteIcon}>
+                <TouchableOpacity style={styles.deleteIcon} onPress={onClear}>
                     <Icons.XCircle 
                        size={verticalScale(24)}
                        weight="fill"
@@ -84,6 +84,12 @@ const styles = StyleSheet.create({
         overflow: "hidden",
     },
     deleteIcon: {
-        position: "absolute"
+        position: "absolute",
+        top: scale(6),
+        right: scale(6),
+        shadowColor: colors.black,
+        shadowOffset: { width: 0, height: 5},
+        shadowOpacity: 1,
+        shadowRadius: 10
     }
 })

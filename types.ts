@@ -162,7 +162,7 @@ export type ResponseType = {
 export type WalletType = {
     id?: string;
     name: string;
-    amoun?: number;
+    amount?: number;
     totalIncome?: number;
     totalExpenses?: number;
     image:any;
