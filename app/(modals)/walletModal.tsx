@@ -1,12 +1,11 @@
 import { Alert, StyleSheet, Text, View, ScrollView } from 'react-native'
 import { UserDataType, WalletType } from '@/types';
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import ModalWrapper from '@/components/ModalWrapper'
 import Typo from '@/components/Typo'
 import { useAuth } from '@/contexts/authContext';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as ImagePicker from "expo-image-picker";
-
 import Header from '@/components/Header';
 import BackButton from '@/components/BackButton';
 import { colors, spacingY } from '@/constants/theme';
@@ -19,28 +18,27 @@ import { createOrUpdateWallet } from '@/services/walletService';
 
 
 
+
 const WalletModal = () => {
   const {user, updateUserData } = useAuth();
-  const [wallet, setWallet] = useState<UserDataType>({
+  const [wallet, setWallet] = useState<WalletType>({
       name: "",
       image: null,
   });
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   
-  const onPickImage = async() => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images", "videos"],
-      // allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.5
-    });
+  const oldWallet: {name: string, image: string, id: string} = useLocalSearchParams();
+  console.log("old wallet: ", oldWallet);
 
-    if(!result.canceled){
-       
+  useEffect(() => {
+    if (oldWallet?.id){
+      setWallet({
+        name: oldWallet.name,
+        image: oldWallet.image,
+      });
     }
-  }
-
+  }, []);
   
   const onSubmit = async() => {
     let { name, image } = wallet;
@@ -54,11 +52,12 @@ const WalletModal = () => {
       image,
       uid: user?.uid
     };
-
+    if(oldWallet?.id) data.id = oldWallet?.id;
+    // todo: include wallet id if updating 
     setLoading(true);
     const res = await createOrUpdateWallet(data);
     setLoading(false);
-    console.log('result: ', res);
+    // console.log('result: ', res);
     if(res.success){
       router.back();
     }else{
@@ -70,7 +69,7 @@ const WalletModal = () => {
     <ModalWrapper>
         <View style={styles.container}>
           <Header
-            title="New Wallet"
+            title={oldWallet?.id ? "Update Wallet" : "New Wallet"}
             leftIcon={<BackButton />}
             style={{marginBottom: 20}}
           />
@@ -104,7 +103,9 @@ const WalletModal = () => {
         <View style={styles.footer}>
             <Button onPress={onSubmit} loading={loading} style={{ flex: 1}}>
                <Typo color={colors.black} fontWeight={"700"}>
-                  Add Wallet
+                  {
+                    oldWallet?.id ? "Update Wallet" : "Add Wallet"
+                  }
                </Typo>
             </Button>            
         </View>
