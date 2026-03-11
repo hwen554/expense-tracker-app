@@ -14,6 +14,7 @@ import Input from '@/components/Input';
 import Button from '@/components/Button';
 import { updateUser } from '@/services/userService';
 import { scale } from '@/utils/styling';
+import ImageUpload from '@/components/ImageUpload';
 
 
 
@@ -65,7 +66,7 @@ const WalletModal = () => {
           {/* form */}
           <ScrollView contentContainerStyle={styles.form}>
               <View style={styles.inputContainer}>
-                  <Typo color={colors.neutral200}>
+                  <Typo color={colors.neutral200} style={{ marginBottom: spacingY._10}}>
                     Wallet Name
                   </Typo>
                   <Input
@@ -74,6 +75,15 @@ const WalletModal = () => {
                        onChangeText={(value) => 
                           setWallet({ ...wallet, name: value })
                        }
+                  />
+                  <Typo color={colors.neutral200} style={{ marginBottom: spacingY._10, marginTop: spacingY._20}}>
+                    Wallet Icon
+                  </Typo>
+                  <ImageUpload
+                       file={wallet.image} 
+                       onClear={() => setWallet({...wallet, image: null})}
+                       onSelect={file=> setWallet({...wallet, image: file})} 
+                       placeholder='Upload Image'
                   />
               </View>
           </ScrollView>
@@ -99,10 +109,10 @@ const styles = StyleSheet.create({
       paddingHorizontal: spacingY._20
     },
     inputContainer: {
-     
+      
     },
     form: {
-
+      
     },
     footer: {
       alignItems: 'center',
