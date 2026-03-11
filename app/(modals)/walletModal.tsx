@@ -15,6 +15,7 @@ import Button from '@/components/Button';
 import { updateUser } from '@/services/userService';
 import { scale } from '@/utils/styling';
 import ImageUpload from '@/components/ImageUpload';
+import { createOrUpdateWallet } from '@/services/walletService';
 
 
 
@@ -44,7 +45,7 @@ const WalletModal = () => {
   const onSubmit = async() => {
     let { name, image } = wallet;
     if(!name.trim() || !image) {
-      Alert.alert("User", "Please fill all the fields");
+      Alert.alert("Wallet", "Please fill all the fields");
       return;
     }
 
@@ -55,14 +56,13 @@ const WalletModal = () => {
     };
 
     setLoading(true);
-    const res = await updateUser(user?.uid as string, wallet);
+    const res = await createOrUpdateWallet(data);
     setLoading(false);
+    console.log('result: ', res);
     if(res.success){
-      // update user
-      updateUserData(user?.uid as string);
       router.back();
     }else{
-      Alert.alert("User", res.msg);
+      Alert.alert("Wallet", res.msg);
     }
   };
 
