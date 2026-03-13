@@ -1,48 +1,50 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React, {useState, useEffect} from 'react'
-import { collection, onSnapshot, query, QueryConstraint } from 'firebase/firestore'
-import { firebaseDb } from '@/config/firebase';
-
+import { firebaseDb } from "@/config/firebase";
+import {
+    collection,
+    onSnapshot,
+    query,
+    QueryConstraint,
+} from "firebase/firestore";
+import { useEffect, useState } from "react";
 
 const useFetchData = <T>(
-    collectionName: string,
-    constraints: QueryConstraint[] = []
+  collectionName: string,
+  constraints: QueryConstraint[] = [],
 ) => {
-    const [data, ssetData] = useState<T[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+  const [data, ssetData] = useState<T[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        if(!collectionName){
-            return;
-        }
-        const collectionRef = collection(firebaseDb, collectionName);
-        const q = query(collectionRef, ...constraints);
+  useEffect(() => {
+    if (!collectionName) {
+      return;
+    }
+    const collectionRef = collection(firebaseDb, collectionName);
+    const q = query(collectionRef, ...constraints);
 
-        const unsub = onSnapshot(q, (snapshot)=> {
-            const fetchedData = snapshot.docs.map(doc => {
-                return {
-                    id: doc.id,
-                    ...doc.data()
-                }
-            }) as T[];
-            ssetData(fetchedData);
-            setLoading(false);
+    const unsub = onSnapshot(
+      q,
+      (snapshot) => {
+        const fetchedData = snapshot.docs.map((doc) => {
+          return {
+            id: doc.id,
+            ...doc.data(),
+          };
+        }) as T[];
+        ssetData(fetchedData);
+        setLoading(false);
+      },
+      (error) => {
+        console.log("Error fetching data: ", error);
+        setError(error.message);
+        setLoading(false);
+      },
+    );
 
-        }, (error) => {
-            console.log("Error fetching data: ", error);
-            setError(error.message);
-            setLoading(false);
-        });
+    return () => unsub();
+  }, [collectionName, JSON.stringify(constraints)]);
 
-        return () => unsub();
-    }, []);
-
-    return {data, loading, error};
-
-    
-}
+  return { data, loading, error };
+};
 
 export default useFetchData;
-
-

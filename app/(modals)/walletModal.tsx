@@ -8,14 +8,14 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as ImagePicker from "expo-image-picker";
 import Header from '@/components/Header';
 import BackButton from '@/components/BackButton';
-import { colors, spacingY } from '@/constants/theme';
+import { colors, spacingX, spacingY } from '@/constants/theme';
 import Input from '@/components/Input';
 import Button from '@/components/Button';
 import { updateUser } from '@/services/userService';
-import { scale } from '@/utils/styling';
+import { scale, verticalScale } from '@/utils/styling';
 import ImageUpload from '@/components/ImageUpload';
-import { createOrUpdateWallet } from '@/services/walletService';
-
+import { createOrUpdateWallet, deleteWallet } from '@/services/walletService';
+import * as Icons from 'phosphor-react-native';
 
 
 
@@ -65,6 +65,38 @@ const WalletModal = () => {
     }
   };
 
+  const onDelete = async() => {
+      console.log("delete wallet: ", oldWallet?.id);
+      if(!oldWallet?.id) return;
+      setLoading(true);
+      const res = await deleteWallet(oldWallet?.id);
+      setLoading(false);
+      if(res.success){
+        router.back();
+      }else{
+        Alert.alert("Delete Wallet", res.msg);
+      }
+  }
+
+  const showDeleteAlert = () => {
+    Alert.alert(
+      "Confirm",
+      "Are you sure you want to delete this wallet? \nThis action will remove all transactions associated with this wallet and cannot be undone.",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Delete"),
+          style: "cancel"
+        },
+        {
+          text: "Delete",
+          onPress: () => onDelete(),
+          style: "destructive"
+        }
+      ]
+    );
+  }
+
   return (
     <ModalWrapper>
         <View style={styles.container}>
@@ -101,6 +133,15 @@ const WalletModal = () => {
         </View>
 
         <View style={styles.footer}>
+            {oldWallet?.id && (
+              <Button onPress={showDeleteAlert} style={{ backgroundColor: colors.rose, paddingHorizontal: spacingX._15}}>
+                 <Icons.Trash
+                    color={colors.white}
+                    size={verticalScale(24)}
+                    weight="bold"
+                 />
+              </Button>
+            )}
             <Button onPress={onSubmit} loading={loading} style={{ flex: 1}}>
                <Typo color={colors.black} fontWeight={"700"}>
                   {
