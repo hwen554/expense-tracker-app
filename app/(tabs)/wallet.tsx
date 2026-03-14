@@ -10,12 +10,7 @@ import { useRouter } from "expo-router";
 import { orderBy, where } from "firebase/firestore";
 import * as Icons from "phosphor-react-native";
 import React from "react";
-import {
-   FlatList,
-   StyleSheet,
-   TouchableOpacity,
-   View
-} from "react-native";
+import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
 
 import WalletListItem from "@/components/WalletListItem";
 
@@ -64,11 +59,13 @@ const Wallet = () => {
             </Typo>
             <TouchableOpacity
               onPress={() => router.push("/(modals)/walletModal")}
+              hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+              style={styles.addButton}
             >
               <Icons.PlusCircle
                 weight="fill"
                 color={colors.primary}
-                size={verticalScale(24)}
+                size={verticalScale(50)}
               />
             </TouchableOpacity>
           </View>
@@ -117,6 +114,10 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: radius._30,
     padding: spacingY._20,
     paddingTop: spacingY._25,
+  },
+  addButton: {
+    padding: spacingY._5,
+    borderRadius: radius._12,
   },
   listStyle: {
     paddingVertical: spacingY._25,

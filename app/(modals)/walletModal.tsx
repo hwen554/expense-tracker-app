@@ -133,7 +133,7 @@ const WalletModal = () => {
         </View>
 
         <View style={styles.footer}>
-            {oldWallet?.id && (
+            {oldWallet?.id && !loading && (
               <Button onPress={showDeleteAlert} style={{ backgroundColor: colors.rose, paddingHorizontal: spacingX._15}}>
                  <Icons.Trash
                     color={colors.white}
