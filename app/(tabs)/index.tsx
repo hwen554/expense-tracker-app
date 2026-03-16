@@ -11,12 +11,13 @@ import { verticalScale } from '@/utils/styling';
 import * as Icons from "phosphor-react-native";
 import HomeCard from '@/components/HomeCard';
 import TransactionList from '@/components/TransactionList';
+import { useRouter } from 'expo-router';
 
 
 const Home = () => {
 
   const { user } = useAuth();
-  
+  const router = useRouter();
 
   return (
     <ScreenWrapper>
@@ -51,8 +52,21 @@ const Home = () => {
              <HomeCard />
           </View>
 
-          <TransactionList title='Recent Transactions'/>
-        </ScrollView>       
+          <TransactionList
+            data={[1,2,3,4,5,6]}
+            loading={false}
+            emptyListMessage="No recent transactions added yet" 
+            title='Recent Transactions'
+          />
+        </ScrollView> 
+
+        <Button style={styles.floatingButton} onPress={() => router.push("/(modals)/transactionModal")}>
+            <Icons.Plus
+               color={colors.black}
+               weight="bold"
+               size={verticalScale(24)}
+            />
+        </Button>      
 
       </View>
       
@@ -88,6 +102,8 @@ const styles = StyleSheet.create({
       right: verticalScale(30)
      },
      scrollViewStyle: {
-      
+      marginTop: spacingY._10,
+      paddingBottom: verticalScale(100),
+      gap: spacingY._25
      }
 })
