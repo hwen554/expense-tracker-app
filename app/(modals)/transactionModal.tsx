@@ -1,4 +1,5 @@
 import BackButton from "@/components/BackButton";
+import Button from "@/components/Button";
 import Header from "@/components/Header";
 import ImageUpload from "@/components/ImageUpload";
 import Input from "@/components/Input";
@@ -6,15 +7,19 @@ import ModalWrapper from "@/components/ModalWrapper";
 import Typo from "@/components/Typo";
 import { colors, radius, spacingX, spacingY } from "@/constants/theme";
 import { useAuth } from "@/contexts/authContext";
-import { TransactionType } from "@/types";
+import { TransactionType, WalletType } from "@/types";
 import { scale, verticalScale } from "@/utils/styling";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
-
+import { ScrollView, StyleSheet, View, Text } from "react-native";
+import * as Icons from "phosphor-react-native";
+import { Dropdown } from "react-native-element-dropdown";
+import { transactionTypes } from "@/constants/data";
+import useFetchData from "@/hooks/useFetchData";
+import { orderBy, where } from "firebase/firestore";
 
 const TransactionModal = () => {
-  const { user, updateUserData } = useAuth();
+  const { user } = useAuth();
   const [transaction, setTransaction] = useState<TransactionType>({
     type: "expense",
     amount: 0,
@@ -27,17 +32,38 @@ const TransactionModal = () => {
 
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  
+  const {
+    data: wallets,
+    loading: walletLoading,
+    error,
+  } = useFetchData<WalletType>("wallets", [
+    where("uid", "==", user?.uid),
+    orderBy("created", "desc"),
+  ]);
 
   const oldTransaction: { name: string; image: string; id: string } =
     useLocalSearchParams();
+
+  const onSubmit = async () => {
+
+  }
+  
+  const showDeleteAlert = () => {
+
+  }
+
+
+
+
 
   return (
     <ModalWrapper>
       <View style={styles.container}>
         <Header
-          title={oldTransaction?.name ? "Edit Transaction" : "Add Transaction"}
+          title={oldTransaction?.id ? "Update Transaction" : "New Transaction"}
           leftIcon={<BackButton />}
-          style={{ marginBottom: spacingY._20 }}
+          style={{ marginBottom: spacingY._10 }}
         />
 
         {/* form */}
@@ -47,10 +73,26 @@ const TransactionModal = () => {
         >
           <View style={styles.inputContainer}>
             <Typo color={colors.neutral200}>Type</Typo>
-            <Input
-               placeholder="Salary"
-               value={transaction.description}
-               onChangeText={(value) => setTransaction({ ...transaction, description: value })}
+            {/* Dropdown here */}
+            <Dropdown
+              style={styles.dropdownContainer}
+              activeColor={colors.neutral700}
+              // placeholderStyle={styles.dropdownPlaceholder}
+              selectedTextStyle={styles.dropdownSelectedText}
+              iconStyle={styles.dropdownIcon}
+              data={transactionTypes}
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              itemTextStyle={styles.dropdownItemText}
+              itemContainerStyle={styles.dropdownItemContainer}
+              containerStyle={styles.dropdownListContainer}
+              // placeholder={!isFocus ? 'Select item' : '...'}
+              value={transaction.type}
+              onChange={item => {
+                setTransaction({ ...transaction, type: item.value });
+              }}
+              
             />
           </View>
           <View style={styles.inputContainer}>
@@ -68,7 +110,26 @@ const TransactionModal = () => {
       </View>
 
       <View style={styles.footer}>
-
+          {oldTransaction?.id && !loading && (
+            <Button
+              onPress={showDeleteAlert}
+              style={{ 
+                backgroundColor: colors.rose,
+                paddingHorizontal: spacingX._15,
+              }}
+            >
+              <Icons.Trash
+                color={colors.white}
+                size={verticalScale(24)}
+                weight="bold"
+              />
+            </Button>
+          )}
+          <Button onPress={onSubmit} loading={loading} style={{ flex: 1}}>
+             <Typo color={colors.black} fontWeight={"700"}>
+                {oldTransaction?.id ? "Update Transaction" : "Add Transaction"}
+             </Typo>
+          </Button>
       </View>
     </ModalWrapper>
   );
@@ -169,8 +230,8 @@ const styles = StyleSheet.create({
     shadowColor: colors.black,
     shadowOffset: { width: 0, height: 5},
     shadowOpacity: 1,
-    shadowRadius: 10,
-    elevation: 10
+    shadowRadius: 15,
+    elevation: 5
   },
   dropdownPlaceholder: {
     color: colors.white
