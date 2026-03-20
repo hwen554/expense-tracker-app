@@ -1,5 +1,5 @@
 import { colors, radius, spacingX, spacingY } from "@/constants/theme";
-import { TransactionListType } from "@/types";
+import { TransactionListType, TransactionType } from "@/types";
 import { FlashList } from "@shopify/flash-list";
 import React from "react";
 import { StyleSheet, View, TouchableOpacity} from "react-native";
@@ -7,17 +7,34 @@ import Typo from "./Typo";
 import { TransactionItemProps } from '../types';
 import { verticalScale } from "@/utils/styling";
 import Loading from "./Loading";
-import { expenseCategories } from "@/constants/data";
+import { expenseCategories, incomeCategory } from "@/constants/data";
+import { Timestamp } from "firebase/firestore";
+import { useRouter } from "expo-router";
 const TransactionList = ({
   data,
   title,
   loading,
   emptyListMessage,
 }: TransactionListType) => {
+  const router = useRouter();
+  
+  const handleClick = (item: TransactionType) => {
+    router.push({
+        pathname: "/(modals)/transactionModal",
+        params: {
+            id: item?.id,
+            type: item?.type,
+            amount: item?.amount?.toString(),
+            category: item?.category,
+            date: (item.date as Timestamp)?.toDate()?.toISOString(),
+            image: item?.image,
+            description: item?.description,
+            uid: item?.uid,
+            walletId: item?.walletId
+        },
+    });
+  };
 
-  const handleClick = () => {
-
-  }
   return (
     <View style={styles.container}>
       {title && (
@@ -58,8 +75,12 @@ const TransactionList = ({
 
 const TransactionItem = ({ item, index, handleClick }: TransactionItemProps
  ) => {
-  let category = expenseCategories["rent"];
+  let category = item?.type == "income" ? incomeCategory : expenseCategories[item.category!];
   const IconComponent = category.icon;
+  const date = (item?.date as Timestamp)?.toDate()?.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short"
+  });
   return (
     <View>
       <TouchableOpacity style={styles.row} onPress={() => handleClick(item)}>
@@ -78,16 +99,16 @@ const TransactionItem = ({ item, index, handleClick }: TransactionItemProps
                 {category.label}
             </Typo>
             <Typo size={12} color={colors.neutral400} textProps={{numberOfLines: 1}}>
-                paid wifi bill
+                {item?.description || "No description"}
             </Typo>
          </View>
 
          <View style={styles.amountDate}>
-            <Typo fontWeight={"500"} color={colors.rose}>
-                - $25
+            <Typo fontWeight={"500"} color={item?.type == "income" ? colors.primary : colors.rose}>
+                {`${item?.type === "income" ? "+ " : "- "}${item?.amount.toFixed(2)}`}
             </Typo>
             <Typo size={13} color={colors.neutral400}>
-                12 Jan
+                {date}
             </Typo>
          </View>
       </TouchableOpacity>

@@ -1,10 +1,11 @@
 import { firebaseDb } from "@/config/firebase";
-import { TransactionType, WalletType } from "@/types";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { TransactionType, WalletType, ResponseType } from "@/types";
+import { collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { uploadFileToCloudinary } from "./imageService";
 
 export const createOrUpdateTransaction = async (
     transactionData: Partial<TransactionType>
-) => {
+): Promise<ResponseType> => {
     try {
         const {id, type, walletId, amount, image} = transactionData;
         if(!amount || amount <= 0 || !walletId || !type){
@@ -13,7 +14,9 @@ export const createOrUpdateTransaction = async (
 
         if(id){
             // todo: update existing transaction
-
+            const oldTransactionSnapshot = await getDoc(doc(firebaseDb, "transactions", id));
+            const oldTransaction = oldTransactionSnapshot.data() as TransactionType;
+            const shouldRevertOldTransaction = oldTransaction.type != type || oldTransaction.amount != amount || oldTransaction.walletId != walletId;
         }else{
             // update wallet for new transaction
             let res = await updateWalletForNewTransaction(
@@ -24,9 +27,31 @@ export const createOrUpdateTransaction = async (
             if(!res.success) return res;
         }
 
-        if(i)
+        if(image){
+            const imageUploadRes = await uploadFileToCloudinary(
+                image,
+                "transactions"
+            );
+            if(!imageUploadRes.success){
+                return {
+                    success: false,
+                    msg: imageUploadRes.msg || "Failed to upload receipt "
+                };
+            }
+            transactionData.image = imageUploadRes.data;
+        }
 
-        return { success: true}
+        const transactionRef = id
+          ? doc(firebaseDb, "transactions", id)
+          : doc(collection(firebaseDb, "transactions"));
+
+          await setDoc(transactionRef, transactionData, { merge: true });
+
+
+        return { 
+            success: true,
+            data: { ...transactionData, id: transactionRef.id }
+        }
     }catch(error: any){
         console.log("error: ", error);
         return { success: false, msg: error?.message || "An error occurred" };
