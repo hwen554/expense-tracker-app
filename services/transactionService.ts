@@ -16,7 +16,14 @@ export const createOrUpdateTransaction = async (
             // todo: update existing transaction
             const oldTransactionSnapshot = await getDoc(doc(firebaseDb, "transactions", id));
             const oldTransaction = oldTransactionSnapshot.data() as TransactionType;
-            const shouldRevertOldTransaction = oldTransaction.type != type || oldTransaction.amount != amount || oldTransaction.walletId != walletId;
+            const shouldRevertOriginal = 
+            oldTransaction.type != type || 
+            oldTransaction.amount != amount || 
+            oldTransaction.walletId != walletId;
+            if(shouldRevertOriginal){
+                let res = await revertAndUpdateWallets(oldTransaction, Number(amount), type, walletId);
+                if(!res.success) return res;
+            }
         }else{
             // update wallet for new transaction
             let res = await updateWalletForNewTransaction(
@@ -91,6 +98,46 @@ const updateWalletForNewTransaction = async(
             amount: updatedWalletAmount,
             [updatedType]: updatedTotals
         });
+
+        return { success: true };
+    }catch(error: any){
+        console.log("error updating wallet for new transaction", error);
+        return { success: false, msg: error.message };
+    }
+}
+
+const revertAndUpdateWallets = async(
+    oldTransaction: TransactionType,
+    newTransactionAmount: number,
+    newTransactionType: string,
+    newWalletId: string
+) => {
+    try{
+        const oldWalletSnapshot = await getDoc(doc(firebaseDb, "wallets", oldTransaction.walletId));
+
+        const originalWallet = oldWalletSnapshot.data() as WalletType;
+
+        let newWalletSnapshot = await getDoc(doc(firebaseDb, "wallets", newWalletId));
+
+
+        let newWallet = newWalletSnapshot.data() as WalletType;
+
+        const revertType = oldTransaction.type == "income" ? "totalIncome" : "totalExpenses";
+
+        const revertIncomeExpense: number = 
+        oldTransaction.type == "income"
+            ? - Number(oldTransaction.amount) :
+            Number(oldTransaction.amount);
+        
+        const revertedWalletAmount = 
+        Number(originalWallet.amount) + revertIncomeExpense;
+        
+        const revertedIncomeExpenseAmount = 
+        Number(originalWallet[revertType]) - Number(oldTransaction.amount);
+
+        if(newTransactionType == "expense"){
+
+        }
 
         return { success: true };
     }catch(error: any){
