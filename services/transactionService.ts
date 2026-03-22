@@ -131,17 +131,63 @@ const revertAndUpdateWallets = async(
         
         const revertedWalletAmount = 
         Number(originalWallet.amount) + revertIncomeExpense;
+        // wallet amount, after the transaction is removed
         
         const revertedIncomeExpenseAmount = 
         Number(originalWallet[revertType]) - Number(oldTransaction.amount);
 
         if(newTransactionType == "expense"){
+            // if user tries to convert income to expense on the same wallet
+            // or if the user tries to increase the expense amount and don't have enough balance
+            if((oldTransaction.walletId == newWalletId && revertedWalletAmount < newTransactionAmount)){
+                return { 
+                    success: false, msg: "The selected wallet don't have enough balance"
+                };
+            }
 
+            // if user tries to convert add expense from a new wallet but the wallet don't have enough balance
+            if(newWallet.amount !< newTransactionAmount){
+                return {
+                    success: false,
+                    msg: "The selected wallet don't have enough balance"
+                };
+            }
         }
+
+        await createOrUpdateTransaction({
+            id: oldTransaction.id,
+            amount: revertedWalletAmount,
+            [revertType]: revertedIncomeExpenseAmount,
+        });
+
+        /////////////////
+
+        // refresh new wallet because we may just updated it
+        newWalletSnapshot = await getDoc(doc(firebaseDb, "wallets", newWalletId));
+        newWallet = newWalletSnapshot.data() as WalletType;
+
+        const updateType = newTransactionType == "income" ? "totalIncome" : "totalExpenses";
+
+        const updatedTransactionAmount: number 
+         = newTransactionType == "income"
+         ? Number(newTransactionAmount)
+         : -Number(newTransactionAmount);
+        
+        const newWalletAmount = Number(newWallet.amount) + updatedTransactionAmount;
+
+        const newIncomeExpenseAmount = Number(
+            newWallet[updateType]! + Number(newTransactionAmount) 
+        );
+
+        await createOrUpdateTransaction({
+            id: newWalletId,
+            amount: newWalletAmount,
+            [updateType]: newIncomeExpenseAmount
+        });
 
         return { success: true };
     }catch(error: any){
         console.log("error updating wallet for new transaction", error);
-        return { success: false, msg: error.message };
+        return { success: false, msg: "The selected wallet does not have enough balance" };
     }
 }
