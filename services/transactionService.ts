@@ -52,7 +52,10 @@ export const createOrUpdateTransaction = async (
           ? doc(firebaseDb, "transactions", id)
           : doc(collection(firebaseDb, "transactions"));
 
-          await setDoc(transactionRef, transactionData, { merge: true });
+        if(transactionData.image === undefined){
+            transactionData.image = null;
+        }
+        await setDoc(transactionRef, transactionData, { merge: true });
 
 
         return { 
@@ -159,10 +162,10 @@ const revertAndUpdateWallets = async(
             amount: revertedWalletAmount,
             [revertType]: revertedIncomeExpenseAmount,
         });
-
+        // revert completed
         /////////////////
 
-        // refresh new wallet because we may just updated it
+        // refetch new wallet because we may just updated it
         newWalletSnapshot = await getDoc(doc(firebaseDb, "wallets", newWalletId));
         newWallet = newWalletSnapshot.data() as WalletType;
 
