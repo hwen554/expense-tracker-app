@@ -52,9 +52,7 @@ export const createOrUpdateTransaction = async (
           ? doc(firebaseDb, "transactions", id)
           : doc(collection(firebaseDb, "transactions"));
 
-        if(transactionData.image === undefined){
-            transactionData.image = null;
-        }
+        
         await setDoc(transactionRef, transactionData, { merge: true });
 
 
@@ -192,5 +190,16 @@ const revertAndUpdateWallets = async(
     }catch(error: any){
         console.log("error updating wallet for new transaction", error);
         return { success: false, msg: "The selected wallet does not have enough balance" };
+    }
+}
+
+export const deleteTransaction = async(
+    transactionId: string,
+    walletId: string
+) => {
+    try{
+
+    }catch(error: any){
+        
     }
 }

@@ -9,7 +9,7 @@ import { expenseCategories, transactionTypes } from "@/constants/data";
 import { colors, radius, spacingX, spacingY } from "@/constants/theme";
 import { useAuth } from "@/contexts/authContext";
 import useFetchData from "@/hooks/useFetchData";
-import { createOrUpdateTransaction } from "@/services/transactionService";
+import { createOrUpdateTransaction, deleteTransaction } from "@/services/transactionService";
 import { TransactionType, WalletType } from "@/types";
 import { scale, verticalScale } from "@/utils/styling";
 import DateTimePicker, {
@@ -105,12 +105,11 @@ const TransactionModal = () => {
       category,
       date,
       walletId,
-      image,
+      image: image ? image : null,
       uid: user?.uid 
     };
 
     
-
     if(oldTransaction?.id) transactionData.id = oldTransaction.id;
     setLoading(true);
     const res = await createOrUpdateTransaction(transactionData);
@@ -122,7 +121,35 @@ const TransactionModal = () => {
     }
   };
 
-  const showDeleteAlert = () => {};
+  const onDelete = async() => {
+    if(!oldTransaction?.id) return;
+    setLoading(true);
+    const res = await deleteTransaction(oldTransaction?.id, oldTransaction.walletId);
+    setLoading(false);
+    if(res.success){
+      router.back();
+    }else{
+      Alert.alert("Transaction", res.msg);
+    }
+  }
+
+  const showDeleteAlert = () => {
+    Alert.alert(
+      "Delete Transaction",
+      "Are you sure you want to delete this transaction?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: onDelete,
+        },
+      ]
+    )
+  };
 
   return (
     <ModalWrapper>
