@@ -140,6 +140,7 @@ const TransactionModal = () => {
       [
         {
           text: "Cancel",
+          onPress: () => console.log("cancel delete"),
           style: "cancel",
         },
         {
