@@ -1,6 +1,6 @@
 import { ResponseType, WalletType } from "@/types";
 import { uploadFileToCloudinary } from "./imageService";
-import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, where } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, where, writeBatch } from "firebase/firestore";
 import { firebaseDb } from "@/config/firebase";
 
 export const createOrUpdateWallet = async(
@@ -68,8 +68,21 @@ export const deleteTransactionsByWalletId = async(walletId: string): Promise<Res
                 break;
             }
 
-        }
+            const batch = writeBatch(firebaseDb);
 
+            transactionsSnapshot.forEach((transactionDoc) => {
+                batch.delete(transactionDoc.ref);
+            });
+
+            await batch.commit();
+
+            console.log(`${transactionsSnapshot.size} transactions deleted in this batch`)
+
+        }
+        return {
+            success: true,
+            msg: "All transactions deleted successfully",
+        };
         return { success: true, msg: "Wallet deleted successfully" };
     }catch(error: any){
         console.log('error', error);
