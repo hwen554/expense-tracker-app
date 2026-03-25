@@ -1,5 +1,5 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ScreenWrapper from '@/components/ScreenWrapper';
 import Typo from '@/components/Typo';
 import { colors, radius, spacingX, spacingY } from '@/constants/theme';
@@ -7,19 +7,30 @@ import { scale, verticalScale } from '@/utils/styling';
 import Header from '@/components/Header';
 import  SegmentedControl  from '@react-native-segmented-control/segmented-control'
 import { BarChart, LineChart, PieChart, PopulationPyramid } from "react-native-gifted-charts";
+import Loading from '@/components/Loading';
 
-const barData = [
-  { value: 50, label: "Mon" },
-  { value: 80, label: "Tue" },
-  { value: 40, label: "Wed" },
-  { value: 95, label: "Thu" },
-  { value: 85, label: "Fri" },
-  { value: 70, label: "Sat" },
-  { value: 60, label: "Sun" }
-]
+
 const Statistics = () => {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [chartData, setChartData] = useState(barData);
+  const [chartLoading, setChartLoading] = useState(false);
+  const [chartData, setChartData] = useState([
+  { value: 50, label: "Mon", spacing: scale(4), labelWidth: scale(30), frontColor: colors.primary},
+  { value: 20, frontColor: colors.rose }, 
+  { value: 80, label: "Tue", spacing: scale(4), labelWidth: scale(30), frontColor: colors.primary },
+  { value: 30, frontColor: colors.rose},
+  { value: 40, label: "Wed", spacing: scale(4), labelWidth: scale(30), frontColor: colors.primary },
+  { value: 60, frontColor: colors.rose},
+  { value: 90, label: "Thu", spacing: scale(4), labelWidth: scale(30), frontColor: colors.primary },
+  { value: 20, frontColor: colors.rose},
+  { value: 70, label: "Fri", spacing: scale(4), labelWidth: scale(30), frontColor: colors.primary },
+  { value: 50, frontColor: colors.rose},
+  { value: 100, label: "Sat", spacing: scale(4), labelWidth: scale(30), frontColor: colors.primary },
+]);
+
+  useEffect(() => {
+    
+  },[activeIndex]);
+
 
   return (
     <ScreenWrapper>
@@ -51,11 +62,37 @@ const Statistics = () => {
           <View style={styles.chartContainer}>
             {
               chartData.length > 0 ? (
-                <BarChart />
+                <BarChart 
+                  data={chartData} 
+                  barWidth={scale(12)} 
+                  spacing={[1,2].includes(activeIndex) ? scale(25) : scale(16)} 
+                  roundedTop 
+                  roundedBottom
+                  hideRules
+                  yAxisLabelPrefix="$"
+                  yAxisThickness={0}
+                  xAxisThickness={0}
+                  yAxisLabelWidth={[1,2].includes(activeIndex) ? scale(38) : scale(35)}
+                  yAxisTextStyle={{ color: colors.neutral350 }}
+                  xAxisLabelTextStyle={{ 
+                    color: colors.neutral350, 
+                    fontSize: verticalScale(12)
+                  }}
+                  noOfSections={3}
+                  minHeight={5}
+                  // maxValue={100}
+                />
               ) : (
                 <View style={styles.noChart} />
-              )
-            }
+              )}
+
+              {
+                chartLoading && (
+                  <View style={styles.chartLoadingContainer}>
+                    <Loading color={colors.white} />
+                  </View>
+                )
+              }
           </View>
         </ScrollView>
       </View>
