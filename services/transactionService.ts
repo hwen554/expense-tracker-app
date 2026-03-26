@@ -3,6 +3,8 @@ import { TransactionType, WalletType, ResponseType } from "@/types";
 import { collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, setDoc, Timestamp, updateDoc, where } from "firebase/firestore";
 import { uploadFileToCloudinary } from "./imageService";
 import { getLast7Days } from "@/utils/common";
+import { scale } from "@/utils/styling";
+import { colors } from "@/constants/theme";
 
 export const createOrUpdateTransaction = async (
     transactionData: Partial<TransactionType>
@@ -261,8 +263,50 @@ export const fetchWeeklyStats = async(
 
         const querySnapshot = await getDocs(transactionsQuery);
         const weeklyData = getLast7Days();
+        const transactions: TransactionType[] = [];
+
+        // maping each transaction in day
+        querySnapshot.forEach((doc) => {
+            const transaction = doc.data() as TransactionType;
+            transaction.id = doc.id;
+            transactions.push(transaction);
+
+            const transactionDate = (transaction.date as Timestamp)
+              .toDate()
+              .toISOString()
+              .split("T")[0]; // as specific date
+
+
+            const dayData = weeklyData.find((day) => day.date == transactionDate);
+
+            if (dayData) {
+                if (transaction.type == "income"){
+                    dayData.income += transaction.amount;
+                } else if (transaction.type == "expense") {
+                    dayData.expense += transaction.amount;
+                }
+            }
+        });
+
+        // takes each day and creates two entries in an array
+        const stats = weeklyData.flatMap((day) => [
+          {
+            value: day.income,
+            label: day.day,
+            spacing: scale(4),
+            labelWidth: scale(30),
+            frontColor: colors.primary,
+          },
+          { value: day.expense, frontColor: colors.rose },
+        ]);
         
-        return { success: true,}
+        return { 
+            success: true, 
+            data: {
+                stats,
+                transactions
+            },
+        };
     }catch(error: any){
         console.log("error fetching weekly stats: ", error);
         return { success: false, msg: error.message };

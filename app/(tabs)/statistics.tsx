@@ -9,6 +9,7 @@ import  SegmentedControl  from '@react-native-segmented-control/segmented-contro
 import { BarChart, LineChart, PieChart, PopulationPyramid } from "react-native-gifted-charts";
 import Loading from '@/components/Loading';
 import { useAuth } from '@/contexts/authContext';
+import { fetchWeeklyStats } from '@/services/transactionService';
 
 
 const Statistics = () => {
@@ -41,8 +42,9 @@ const Statistics = () => {
     }
   },[activeIndex]);
 
-  const getWeekStatus = () => {
-
+  const getWeekStatus = async() => {
+    setChartLoading(true);
+    let res = await fetchWeeklyStats(user?.uid as string);
   }
 
   const getMonthStatus = () => {
