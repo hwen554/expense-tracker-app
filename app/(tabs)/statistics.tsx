@@ -8,10 +8,12 @@ import Header from '@/components/Header';
 import  SegmentedControl  from '@react-native-segmented-control/segmented-control'
 import { BarChart, LineChart, PieChart, PopulationPyramid } from "react-native-gifted-charts";
 import Loading from '@/components/Loading';
+import { useAuth } from '@/contexts/authContext';
 
 
 const Statistics = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const user = useAuth();
   const [chartLoading, setChartLoading] = useState(false);
   const [chartData, setChartData] = useState([
   { value: 50, label: "Mon", spacing: scale(4), labelWidth: scale(30), frontColor: colors.primary},
@@ -28,9 +30,28 @@ const Statistics = () => {
 ]);
 
   useEffect(() => {
-    
+    if(activeIndex === 0){
+      getWeekStatus();
+    }
+    if(activeIndex === 1){
+      getMonthStatus();
+    }
+    if(activeIndex === 2){
+      getYearStatus();
+    }
   },[activeIndex]);
 
+  const getWeekStatus = () => {
+
+  }
+
+  const getMonthStatus = () => {
+
+  }
+
+  const getYearStatus = () => {
+
+  }
 
   return (
     <ScreenWrapper>
