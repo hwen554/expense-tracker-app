@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import ScreenWrapper from '@/components/ScreenWrapper';
 import Typo from '@/components/Typo';
@@ -10,25 +10,15 @@ import { BarChart, LineChart, PieChart, PopulationPyramid } from "react-native-g
 import Loading from '@/components/Loading';
 import { useAuth } from '@/contexts/authContext';
 import { fetchWeeklyStats } from '@/services/transactionService';
+import TransactionList from '@/components/TransactionList';
 
 
 const Statistics = () => {
   const [activeIndex, setActiveIndex] = useState(0);
-  const user = useAuth();
+  const {user} = useAuth();
   const [chartLoading, setChartLoading] = useState(false);
-  const [chartData, setChartData] = useState([
-  { value: 50, label: "Mon", spacing: scale(4), labelWidth: scale(30), frontColor: colors.primary},
-  { value: 20, frontColor: colors.rose }, 
-  { value: 80, label: "Tue", spacing: scale(4), labelWidth: scale(30), frontColor: colors.primary },
-  { value: 30, frontColor: colors.rose},
-  { value: 40, label: "Wed", spacing: scale(4), labelWidth: scale(30), frontColor: colors.primary },
-  { value: 60, frontColor: colors.rose},
-  { value: 90, label: "Thu", spacing: scale(4), labelWidth: scale(30), frontColor: colors.primary },
-  { value: 20, frontColor: colors.rose},
-  { value: 70, label: "Fri", spacing: scale(4), labelWidth: scale(30), frontColor: colors.primary },
-  { value: 50, frontColor: colors.rose},
-  { value: 100, label: "Sat", spacing: scale(4), labelWidth: scale(30), frontColor: colors.primary },
-]);
+  const [chartData, setChartData] = useState([]);
+  const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
     if(activeIndex === 0){
@@ -45,6 +35,13 @@ const Statistics = () => {
   const getWeekStatus = async() => {
     setChartLoading(true);
     let res = await fetchWeeklyStats(user?.uid as string);
+    setChartLoading(false);
+    if(res.success){
+      setChartData(res?.data?.stats);
+      setTransactions(res?.data?.transactions);
+    }else{
+      Alert.alert("Error", res?.msg || "Failed to fetch statistics");
+    }
   }
 
   const getMonthStatus = () => {
@@ -116,6 +113,16 @@ const Statistics = () => {
                   </View>
                 )
               }
+          </View>
+
+          {/* transactions */}
+          <View >
+            <TransactionList
+              title='transactions'
+              emptyListMessage='No transaction found'
+              data={transactions}
+            />
+              
           </View>
         </ScrollView>
       </View>
