@@ -21,24 +21,29 @@ const SearchModal = () => {
 
   const [search, setSearch] = useState("");
 
-  const constraints = [where("uid", "==", user?.uid), orderBy("date", "desc")];
+  const constraints = user?.uid
+    ? [where("uid", "==", user.uid), orderBy("date", "desc")]
+    : [];
 
   const {
     data: allTransactions,
     error,
     loading: transactionsLoading,
-  } = useFetchData<TransactionType>("transactions", constraints);
+  } = useFetchData<TransactionType>(
+    user?.uid ? "transactions" : "",
+    constraints,
+  );
   // console.log("all transactions: ", allTransactions.length);
 
   const filteredTransactions = allTransactions.filter((item) => {
-    if(search.length > 1){
-      if(
+    if (search.length > 1) {
+      if (
         item.category?.toLowerCase()?.includes(search.toLowerCase()) ||
         item.type?.toLowerCase()?.includes(search.toLowerCase()) ||
-        item.description?.toLowerCase()?.includes(search.toLowerCase()) 
-    ) {
-      return true;
-     }
+        item.description?.toLowerCase()?.includes(search.toLowerCase())
+      ) {
+        return true;
+      }
       return false;
     }
     return true;

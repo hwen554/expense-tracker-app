@@ -55,6 +55,9 @@ export const deleteWallet = async(walletId: string): Promise<ResponseType> => {
 
 export const deleteTransactionsByWalletId = async(walletId: string): Promise<ResponseType> => {
     try{
+        if (!walletId) {
+            return { success: false, msg: "Wallet ID is required" };
+        }
         let hasMoreTransactions = true;
 
         while(hasMoreTransactions){

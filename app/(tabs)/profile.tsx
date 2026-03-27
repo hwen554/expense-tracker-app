@@ -1,7 +1,7 @@
 import Header from "@/components/Header";
 import ScreenWrapper from "@/components/ScreenWrapper";
 import Typo from "@/components/Typo";
-import { auth } from "@/config/firebase";
+import { auth, firebaseDb } from "@/config/firebase";
 import { colors, radius, spacingX, spacingY } from "@/constants/theme";
 import { useAuth } from "@/contexts/authContext";
 import { getProfileImage } from "@/services/imageService";
@@ -9,7 +9,8 @@ import { accountOptionType } from "@/types";
 import { verticalScale } from "@/utils/styling";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import { signOut } from "firebase/auth";
+import { deleteUser, signOut } from "firebase/auth";
+import { deleteDoc, doc } from "firebase/firestore";
 import * as Icons from "phosphor-react-native";
 import React from "react";
 import { Alert, StyleSheet, TouchableOpacity, View } from "react-native";
@@ -43,10 +44,50 @@ const Profile = () => {
       //   routeName: "/(modals)/profileModal",
       bgColor: "#6366f1",
     },
+    {
+      title: "Delete Account",
+      icon: <Icons.UserCircleMinus size={26} color={colors.white} weight="fill" />,
+      bgColor: colors.rose,
+    }
   ];
 
   const handleLogout = async () => {
     await signOut(auth);
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      const currentUser = auth.currentUser;
+      if (!currentUser) return;
+
+      // 删除 Firestore 中的用户文档
+      await deleteDoc(doc(firebaseDb, "users", currentUser.uid));
+
+      // 删除 Firebase Auth 账户
+      await deleteUser(currentUser);
+    } catch (error: any) {
+      console.log("Error deleting account: ", error);
+      Alert.alert("Error", error?.message || "Failed to delete account");
+    }
+  };
+
+
+  const showDeleteAccountAlert = () => {
+      Alert.alert(
+        "Delete Account",
+        "Are you sure? This action is irreversible. All your data will be permanently deleted.",
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
+          },
+          {
+            text: "Delete",
+            onPress: () => handleDeleteAccount(),
+            style: "destructive",
+          },
+        ]
+      );
   };
 
   const showLogoutAlert = () => {
@@ -67,6 +108,13 @@ const Profile = () => {
   const handlePress = async (item: accountOptionType) => {
     if (item.title == "Log Out") {
       showLogoutAlert();
+    }
+
+    //注意：如果用户登录时间较久，deleteUser 
+    // 可能会抛出 auth/requires-recent-login 错误，需要用户重新登录后才能删除
+
+    if(item.title == "Delete Account"){
+      showDeleteAccountAlert();
     }
 
     if(item.routeName){
