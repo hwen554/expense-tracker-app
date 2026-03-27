@@ -9,7 +9,7 @@ import  SegmentedControl  from '@react-native-segmented-control/segmented-contro
 import { BarChart, LineChart, PieChart, PopulationPyramid } from "react-native-gifted-charts";
 import Loading from '@/components/Loading';
 import { useAuth } from '@/contexts/authContext';
-import { fetchWeeklyStats } from '@/services/transactionService';
+import { fetchMonthlyStats, fetchWeeklyStats, fetchYearlyStats } from '@/services/transactionService';
 import TransactionList from '@/components/TransactionList';
 
 
@@ -44,12 +44,28 @@ const Statistics = () => {
     }
   }
 
-  const getMonthStatus = () => {
-
+  const getMonthStatus = async() => {
+    setChartLoading(true);
+    let res = await fetchMonthlyStats(user?.uid as string);
+    setChartLoading(false);
+    if(res.success){
+      setChartData(res?.data?.stats);
+      setTransactions(res?.data?.transactions);
+    }else{
+      Alert.alert("Error", res?.msg || "Failed to fetch statistics");
+    }
   }
 
-  const getYearStatus = () => {
-
+  const getYearStatus = async() => {
+    setChartLoading(true);
+    let res = await fetchYearlyStats(user?.uid as string);
+    setChartLoading(false);
+    if(res.success){
+      setChartData(res?.data?.stats);
+      setTransactions(res?.data?.transactions);
+    }else{
+      Alert.alert("Error", res?.msg || "Failed to fetch statistics");
+    }
   }
 
   return (
