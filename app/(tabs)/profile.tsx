@@ -45,6 +45,11 @@ const Profile = () => {
       bgColor: "#6366f1",
     },
     {
+      title: "Reset Password",
+      icon: <Icons.Key size={26} color={colors.white} weight="fill" />,
+      bgColor: "#6366f1",
+    },
+    {
       title: "Delete Account",
       icon: <Icons.UserCircleMinus size={26} color={colors.white} weight="fill" />,
       bgColor: colors.rose,
@@ -115,6 +120,12 @@ const Profile = () => {
 
     if(item.title == "Delete Account"){
       showDeleteAccountAlert();
+    }
+
+    // 跳转到修改密码页面
+    if (item.title == "Reset Password"){
+      router.push("/(modals)/changePwdModal");
+      return;
     }
 
     if(item.routeName){
