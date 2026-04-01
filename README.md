@@ -1,6 +1,12 @@
 # G-Wallet - React Native Application
 
-This is modern mobile app built with React Native and Firebase (as the backend), enabling seamless sharing of daily expense and income. It offers a smooth user experience, dynamic animations, and essential features for a self-focused finance-sharing platform.
+这是一个基于 React Native 构建的现代移动应用，后端采用 Firebase 进行数据管理与实时同步，旨在为用户提供便捷的日常收支记录与分享体验。
+
+该应用拥有简洁直观的用户界面和流畅的动画效果，通过 Firebase 实现数据的实时更新与多端同步。用户可以轻松记录收入与支出，对交易进行分类管理，并以更加直观和互动的方式分析个人消费习惯。
+
+项目围绕“以自我为中心的财务分享”这一理念设计，强调个人财务记录与行为反思，同时兼顾易用性与功能性。整体架构具备良好的扩展性与性能优化，能够为用户提供稳定、高效且流畅的使用体验。
+
+
 
 # Screenshots
 <p align="center">
@@ -12,52 +18,20 @@ This is modern mobile app built with React Native and Firebase (as the backend),
 
 
 
+# 即将上架
+<p align="center">
+  <span style="font-size: 20px; font-weight: bold;">Coming Soon on the App Store</span>
+  <br />
+  <a href="https://www.apple.com/app-store/">
+    <img alt="App Store" src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" width="150"/>
+  </a>
+</p>
 
 
 
-## Get started
 
-1. Install dependencies
 
-   ```bash
-   npm install
-   ```
 
-2. Start the app
 
-   ```bash
-   npx expo start
-   ```
 
-In the output, you'll find options to open the app in a
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
