@@ -3,9 +3,11 @@
 This is modern mobile app built with React Native and Firebase (as the backend), enabling seamless sharing of daily expense and income. It offers a smooth user experience, dynamic animations, and essential features for a self-focused finance-sharing platform.
 
 # Screenshots
-<img width="1320" height="2868" alt="Simulator Screenshot - iPhone 16 Pro Max - 2026-03-29 at 20 33 21" src="https://github.com/user-attachments/assets/aaa6e38c-b2de-4b09-89a6-aa0036950784" />
-<img width="1320" height="2868" alt="Simulator Screenshot - iPhone 16 Pro Max - 2026-03-29 at 20 32 46" src="https://github.com/user-attachments/assets/2c8ac850-ccf8-4b1d-9dc7-aa563e8213e3" />
-<img width="1320" height="2868" alt="Simulator Screenshot - iPhone 16 Pro Max - 2026-03-29 at 20 33 32" src="https://github.com/user-attachments/assets/44f8ea49-a06d-459c-8636-3d5794caa3b0" />
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/2c8ac850-ccf8-4b1d-9dc7-aa563e8213e3" width="30%" style="border-radius:10px; margin:5px;" />
+  <img src="https://github.com/user-attachments/assets/aaa6e38c-b2de-4b09-89a6-aa0036950784" width="30%" style="border-radius:10px; margin:5px;" />
+  <img src="https://github.com/user-attachments/assets/44f8ea49-a06d-459c-aa0036950784" width="30%" style="border-radius:10px; margin:5px;" />
+</p>
 
 
 
