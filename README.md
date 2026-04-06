@@ -10,9 +10,16 @@
 
 # Screenshots
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/2c8ac850-ccf8-4b1d-9dc7-aa563e8213e3" width="30%" style="border-radius:10px; margin:5px;" />
-  <img src="https://github.com/user-attachments/assets/aaa6e38c-b2de-4b09-89a6-aa0036950784" width="30%" style="border-radius:10px; margin:5px;" />
-  <img src="https://github.com/user-attachments/assets/44f8ea49-a06d-459c-aa0036950784" width="30%" style="border-radius:10px; margin:5px;" />
+  <img src="https://github.com/user-attachments/assets/2c8ac850-ccf8-4b1d-9dc7-aa563e8213e3" width="25%" style="border-radius:10px; margin:5px;" />
+  <img src="https://github.com/user-attachments/assets/aaa6e38c-b2de-4b09-89a6-aa0036950784" width="25%" style="border-radius:10px; margin:5px;" />
+  <!-- <img src="https://github.com/user-attachments/assets/44f8ea49-a06d-459c-aa0036950784" width="25%" style="border-radius:10px; margin:5px;" /> -->
+  <img width="25%" height="" alt="Simulator Screenshot - iPhone 16 Pro Max - 2026-03-29 at 20 33 32" src="https://github.com/user-attachments/assets/916ffba3-b24f-4057-8fe3-29c86fc15ef6" />
+  <img width="25%" height="2868" alt="Simulator Screenshot - iPhone 16 Pro Max - 2026-03-29 at 20 33 10" src="https://github.com/user-attachments/assets/db88bb27-3c8d-45d3-8732-8c05a3e15d0c" />
+<img width="25%" height="2868" alt="Simulator Screenshot - iPhone 16 Pro Max - 2026-03-29 at 20 32 51" src="https://github.com/user-attachments/assets/12444d12-63d3-4788-89b5-28bd5580518f" />
+<img width="25%" height="2868" alt="Simulator Screenshot - iPhone 16 Pro Max - 2026-03-29 at 20 32 37" src="https://github.com/user-attachments/assets/3bee1266-0b4a-4172-b017-cf52fd44b6d2" />
+
+  
+  
 </p>
 
 
