@@ -16,6 +16,7 @@ import {
     updatePassword,
 } from 'firebase/auth';
 import { useRouter } from 'expo-router';
+import BackButton from '@/components/BackButton';
 
 const ChangePwdModal = () => {
   const oldPasswordRef = useRef("");
@@ -87,7 +88,7 @@ const ChangePwdModal = () => {
   return (
     <ModalWrapper>
       <View style={styles.container}>
-        <Header title="Change Password" />
+        <Header title="Change Password" leftIcon={<BackButton />} style={{marginBottom: spacingY._20}}/>
 
         <View style={styles.form}>
           <Typo size={16} color={colors.textLighter}>
