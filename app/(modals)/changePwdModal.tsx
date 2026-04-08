@@ -74,7 +74,7 @@ const ChangePwdModal = () => {
       
     } catch (error: any){
       let msg = error.message;
-      if (msg.includes("wrong-password") || msg.inlcudes("invalid-credential")) {
+      if (msg.includes("wrong-password") || msg.includes("invalid-credential")) {
         msg = "Old password is incorrect";
       } else if (msg.includes("weak-password")) {
         msg = "Password is too weak. Please use at least 6 characters";
